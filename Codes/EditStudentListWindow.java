@@ -1,45 +1,200 @@
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 
 public class EditStudentListWindow extends JFrame {
 
-    EditStudentListWindow(){
+    private JButton selectAllButton = new JButton("전체선택");
+    private JButton deleteButton = new JButton("선택삭제");
+    private JButton addButton = new JButton("학생추가");
+    private JButton openButton = new JButton("불러오기");
+    private JButton saveButton = new JButton("변경저장");
+    private JTable table;
+    private ArrayList<Student> studentArrayList;
+    private Object[][] data = {
+            {"20120612", "김도연", "물리학과", new Integer(2), new Boolean(false)},
+            {"20120693", "박용진", "컴퓨터공학과", new Integer(4), new Boolean(false)},
+            {"20141234", "곽창수", "물리학과", new Integer(4), new Boolean(false)}};
+
+    private static final int BOOLEAN_COLUMN = 4;
+    private static boolean isSelectedAll = false;
+
+    protected String[] columnToolTips = {null, null,
+            "The person's favorite sport to participate in",
+            "The number of years the person has played the sport",
+            "If checked, the person eats no meat"};
+
+    public EditStudentListWindow() {
+        studentArrayList = new ArrayList<>();
+        this.insertData();
         this.setTitle("학생리스트 편집");
         this.setSize(500, 800);
         this.setLocationRelativeTo(null); // Center the frame
         this.setLayout(new BorderLayout());
-        this.setVisible(true);
+        this.setResizable(false);
 
-        String data[][]={ {"20120612","김도연","물리학과", "2"},
-                {"20120693","박용진","컴퓨터공학과", "4"},
-                {"20141234","곽창수","물리학과", "4"}};
+        table = new JTable(new MyTableModel());
 
-        String column[]={"학번","이름","학과","학년"};
-        final JTable jt=new JTable(data,column);
-        jt.setCellSelectionEnabled(true);
-        ListSelectionModel select= jt.getSelectionModel();
-        select.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        select.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                /*
-                String Data = null;
-                int[] row = jt.getSelectedRows();
-                int[] columns = jt.getSelectedColumns();
-                for (int i = 0; i < row.length; i++) {
-                    for (int j = 0; j < columns.length; j++) {
-                        Data = (String) jt.getValueAt(row[i], columns[j]);
-                    } }
-                System.out.println("Table element selected is: " + Data);
-*/
-                System.out.println(jt.getValueAt(jt.getSelectedRow(), 0).toString());
+        // table.getModel().addTableModelListener(new CheckBoxModelListener());;
+        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+
+        //Create the scroll pane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        //Add the scroll pane to this panel.
+        this.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel pnBottomMenu = new JPanel();
+        pnBottomMenu.add(selectAllButton);
+        pnBottomMenu.add(deleteButton);
+        pnBottomMenu.add(addButton);
+        pnBottomMenu.add(openButton);
+        pnBottomMenu.add(saveButton);
+        MyButtonActionListener actionListener = new MyButtonActionListener();
+        selectAllButton.addActionListener(actionListener);
+        deleteButton.addActionListener(actionListener);
+        addButton.addActionListener(actionListener);
+        openButton.addActionListener(actionListener);
+        saveButton.addActionListener(actionListener);
+
+        saveButton.setEnabled(false);
+
+
+        /*
+        openButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(int i = 0; i < table.getRowCount(); i++){
+                    Boolean selected = Boolean.valueOf(table.getValueAt(i,BOOLEAN_COLUMN).toString());
+
+                    if(selected){
+                        System.out.println(table.getValueAt(i, 1));
+                    }
+                }
+
+
             }
+        });*/
+        this.add(pnBottomMenu, BorderLayout.SOUTH);
+        this.setVisible(true);
+    }
 
-        });
-        JScrollPane sp=new JScrollPane(jt);
-        this.add(sp, BorderLayout.CENTER);
+    private void insertData(){
+        for(int i = 0; i < data.length; i++){
+            studentArrayList.add(new Student(data[i]));
+        }
+    }
 
+    class MyTableModel extends AbstractTableModel {
+        private String[] columnNames = {"학번","이름","학과","학년", "선택"};
+
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return studentArrayList.size();
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+            return studentArrayList.get(row).get(col);
+        }
+
+        /*
+         * JTable uses this method to determine the default renderer/ editor for
+         * each cell. If we didn't implement this method, then the last column
+         * would contain text ("true"/"false"), rather than a check box.
+         */
+        public Class getColumnClass(int col) {
+            return studentArrayList.get(0).get(col).getClass();
+        }
+
+        /*
+         * Don't need to implement this method unless your table's editable.
+         */
+        public boolean isCellEditable(int row, int col) {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            if (col ==  4) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        /*
+         * Don't need to implement this method unless your table's data can
+         * change.
+         */
+        public void setValueAt(Object value, int row, int col) {
+            Student newStudentData = studentArrayList.get(row);
+            if(col == 0){
+                newStudentData.setStudentID((String) value);
+            }
+            else if(col == 1){
+                newStudentData.setStudentName((String) value);
+            }
+            else if(col == 2){
+                newStudentData.setDepartment((String) value);
+            }
+            else if(col == 3){
+                newStudentData.setGrade((int) value);
+            }else if(col == 4){
+                newStudentData.setSelected((Boolean) value);
+            }
+            studentArrayList.set(row, newStudentData);
+            this.fireTableCellUpdated(row, col);
+            this.fireTableDataChanged();
+        }
+
+        public void removeRow(int index){
+            studentArrayList.remove(index);
+            this.fireTableRowsDeleted(index, index);
+        }
+    }
+
+    public class MyButtonActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == selectAllButton){
+                isSelectedAll = !isSelectedAll;
+                for(int i = 0; i < table.getRowCount(); i++){
+                    table.setValueAt(isSelectedAll, i, BOOLEAN_COLUMN);
+                }
+            }
+            else if(e.getSource() == deleteButton){
+                MyTableModel model = (MyTableModel)table.getModel();
+                int rowCount = table.getRowCount();
+                List<Integer> selectedIndexes = new ArrayList<>();
+                for(int i = 0; i < rowCount; i++){
+                    Boolean selected = Boolean.valueOf(table.getValueAt(i,BOOLEAN_COLUMN).toString());
+                    if(selected){
+                        selectedIndexes.add(i);
+                    }
+                }
+                for(int i = selectedIndexes.size() -1; i >= 0; i--){
+                    System.out.println(table.getValueAt(i, 1));
+                    model.removeRow(i);
+                }
+            }
+            else if(e.getSource() == addButton){
+                new AddStudentWindow();
+                // 변경된 DB 리스트에 추가
+            }
+            else if(e.getSource() == openButton){
+
+            }
+            else if(e.getSource() == saveButton) {
+
+            }
+        }
     }
 
 }

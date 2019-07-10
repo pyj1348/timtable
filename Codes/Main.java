@@ -1,6 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +24,6 @@ public class Main extends JFrame {
         this.setSize(1800, 1000);
         this.setLocationRelativeTo(null); // Center the frame
         this.setLayout(new BorderLayout());
-
         JMenu menu;
 
         menu = new JMenu("ÆÄÀÏ");
@@ -38,14 +35,14 @@ public class Main extends JFrame {
         i1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Test2();
+                new EditStudentListWindow();
             }
         });
 
         i2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Test();
+
             }
         });
 
@@ -99,7 +96,7 @@ public class Main extends JFrame {
                 table[i][j].setLineWrap(true);
                 table[i][j].setWrapStyleWord(true);
                 table[i][j].setDocument(new JTextFieldLimit(130));
-               // table[i][j].setForeground(Color.red);
+                // table[i][j].setForeground(Color.red);
                 table[i][j].setEditable(false);
                 gbAdd(table[i][j], j+1, i+1, 1, 1, 0.0, 0.0);
             }
@@ -134,28 +131,28 @@ public class Main extends JFrame {
     private static void insertStudent() {
         Connection conn = null;
         Statement stmt = null;
-        String data = "20181425   ??   2\r\n" +
-                "20154282   ???   4\r\n" +
-                "20154851                 ???   4\r\n" +
-                "20173286   ???   3\r\n" +
-                "20155546   ???   3\r\n" +
-                "20183976   ???   2\r\n" +
-                "20164603   ???   4\r\n" +
-                "20164343   ???   3\r\n" +
-                "20170501   ???   3\r\n   " +
-                "20134897   ???   3\r\n" +
-                "20173700    ???   3\r\n" +
-                "20140652   ???   3\r\n" +
-                "20183454   ???   2\r\n" +
-                "20150526   ???   4\r\n" +
-                "20123694   ???     4\r\n" +
-                "20144393   ???   4\r\n" +
-                "20172458   ???   3\r\n" +
-                "20152493   ???   3\r\n" +
-                "20131045   ???   4\r\n" +
-                "20172509   ???   3\r\n" +
-                "20165407   ???   2\r\n" +
-                "20154994   ???   3\r\n";
+        String data = "20181425	°­ºó	2\r\n" +
+                "20154282	°­ÁÖ¿µ	4\r\n" +
+                "20154851	              °û´Ùºó	4\r\n" +
+                "20173286	±Ç±âÀº	3\r\n" +
+                "20155546	±ÇÁØÈ¯	3\r\n" +
+                "20183976	±è³ª¿¹	2\r\n" +
+                "20164603	±èµµ¿¬	4\r\n" +
+                "20164343	±è¹ÎÁ¤	3\r\n" +
+                "20170501	±è¹ÎÁö	3\r\n   " +
+                "20134897	±è¼ºÇÑ	3\r\n" +
+                "20173700 	±è¼öÀÎ	3\r\n" +
+                "20140652	±è¼öÇü	3\r\n" +
+                "20183454	±è½ÂÈ£	2\r\n" +
+                "20150526	±èÀ¯Áø	4\r\n" +
+                "20123694	±èÀÎÈ¯	  4\r\n" +
+                "20144393	±èÁö¹Î	4\r\n" +
+                "20172458	±èÁö¿ø	3\r\n" +
+                "20152493	±èÁø¿ì	3\r\n" +
+                "20131045	±èÂù¼ö	4\r\n" +
+                "20172509	±èÇÏ´Ã	3\r\n" +
+                "20165407	±èÇüÅÂ	2\r\n" +
+                "20154994	³²´ö¿ì	3\r\n";
 
         try {
             Class.forName(JDBC_DRIVER);
@@ -179,4 +176,6 @@ public class Main extends JFrame {
             System.out.println(studentInfo[0] + " | " + studentInfo[1] + " | " + studentInfo[2]);
         }
     }
+
 }
+
