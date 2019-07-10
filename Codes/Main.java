@@ -1,5 +1,9 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,6 +27,32 @@ public class Main extends JFrame {
         this.setLocationRelativeTo(null); // Center the frame
         this.setLayout(new BorderLayout());
 
+        JMenu menu;
+
+        menu = new JMenu("파일");
+        JMenuBar mb = new JMenuBar();
+        JMenuItem i1, i2;
+        i1 = new JMenuItem("열기");
+        i2 = new JMenuItem("저장");
+
+        i1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Test2();
+            }
+        });
+
+        i2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Test();
+            }
+        });
+
+        menu.add(i1);
+        menu.add(i2);
+        mb.add(menu);
+        this.setJMenuBar(mb);
         /*      Title      */
 
         JLabel lbTitle = new JLabel("도서관 근로학생 종합시간표",Label.LEFT);
@@ -30,7 +60,6 @@ public class Main extends JFrame {
         Dimension lbTitleSize = lbTitle.getPreferredSize();
         lbTitle.setSize(lbTitleSize);
         this.add(lbTitle, BorderLayout.NORTH);
-
 
         /*      Timetable       */
         gbl = new GridBagLayout();
@@ -60,21 +89,25 @@ public class Main extends JFrame {
         gbAdd(new Label("20:00 ~ 21:00", Label.CENTER), 0,12, 1, 1, 0.0, 1.0);
 
         JTextArea[][] table = new JTextArea[12][5];
-        for(int i=0; i<12; i++){
-            for(int j=0;  j<5; j++){
+        for(int i=0; i<12; i++) {
+            for (int j = 0; j < 5; j++) {
                 table[i][j] = new JTextArea();
                 table[i][j].setSize(100, 100);
-               // table[i][j].disable();
-
+                table[i][j].setPreferredSize(new Dimension(50, 10));
+                table[i][j].setMaximumSize(new Dimension(50, 10));
+                table[i][j].setMinimumSize(new Dimension(50, 10));
+                table[i][j].setLineWrap(true);
+                table[i][j].setWrapStyleWord(true);
+                table[i][j].setDocument(new JTextFieldLimit(130));
+               // table[i][j].setForeground(Color.red);
+                table[i][j].setEditable(false);
                 gbAdd(table[i][j], j+1, i+1, 1, 1, 0.0, 0.0);
             }
+
+
+            this.add(pnTimetable, BorderLayout.CENTER);
         }
-
-        //table[1][1].setText("권준환 김성한 김유진 김지원 여인혁 이금용 이상준 이승문\n" +
-                //"이은희 이재광 조은샘 최영재 ");
-
-        this.add(pnTimetable, BorderLayout.CENTER);
-
+        table[1][1].setText("권준환 김성한 김유진 김지원 여인혁 이금용 이상준 이승문\n" + "권준환 김성한 김유진 김지원 여인혁 이금용 이상준 이승문\n" + "권준환 김성한 김유진 김지원 여인혁 이금용 이상준 이승문\n" +"권준환 김성한 김유진 김지원 여인혁 이금용 이상준 이승문\n");
     }
     private void gbAdd(Component c, int x, int y, int gridwidth, int gridheight, double weightx, double weighty) {
         gbc.gridx = x;
@@ -146,5 +179,4 @@ public class Main extends JFrame {
             System.out.println(studentInfo[0] + " | " + studentInfo[1] + " | " + studentInfo[2]);
         }
     }
-
 }
