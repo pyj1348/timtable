@@ -151,7 +151,6 @@ public class EditStudentListWindow extends JFrame {
             }
             studentArrayList.set(row, newStudentData);
             this.fireTableCellUpdated(row, col);
-            this.fireTableDataChanged();
         }
 
         public void removeRow(int index){
@@ -180,8 +179,8 @@ public class EditStudentListWindow extends JFrame {
                     }
                 }
                 for(int i = selectedIndexes.size() -1; i >= 0; i--){
-                    System.out.println(table.getValueAt(i, 1));
-                    model.removeRow(i);
+                    System.out.println(table.getValueAt(selectedIndexes.get(i), 1));
+                    model.removeRow(selectedIndexes.get(i));
                 }
             }
             else if(e.getSource() == addButton){
