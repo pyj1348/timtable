@@ -42,7 +42,7 @@ public class Main extends JFrame {
         i2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                new Test("C:\\Users\\Jin\\Desktop\\11.txt", "euc-kr");
             }
         });
 

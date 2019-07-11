@@ -1,144 +1,96 @@
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
+public class Test {
 
-public class Test extends JFrame {
-    private boolean DEBUG = false;
+    private boolean isStudentID = false;
+    private boolean isName = false;
+    private boolean isDepartment = false;
+    private boolean isGrade = false;
+    private boolean isAllCols = false;
+    private int col_ID;
+    private int col_Name;
+    private int col_Dept;
+    private int col_Grade;
 
-    protected String[] columnToolTips = {null, null,
-            "The person's favorite sport to participate in",
-            "The number of years the person has played the sport",
-            "If checked, the person eats no meat"};
+    private List<Student> studentArrayList;
+    private final static String DELIMITER = "\\s*\\t\\s*|\\s*,\\s*";
 
-    public Test() {
-        this.setTitle("학생리스트 편집");
-        this.setSize(500, 800);
-        this.setLocationRelativeTo(null); // Center the frame
+    public Test(String path, String encoding) {
 
-        this.setLayout(new BorderLayout());
+        BufferedReader br = null;
+        studentArrayList = new ArrayList<>();
 
-        JTable table = new JTable(new MyTableModel());
+        try {
 
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
 
-        //Create the scroll pane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);
+            String header = br.readLine();
+            String[] columns = null;
 
-        //Add the scroll pane to this panel.
-        this.add(scrollPane, BorderLayout.CENTER);
+            /* 불러오는 파일의 확장자는 .xls/.csv/.txt/ 이어야만 하며
+               첫 줄에는 반드시 학번/이름or성명/학과/학년으로 된 헤더가 모두 있어야만 합니다.
+
+               * 헤더의 순서는 상관 없습니다. *
+               * 다른 부가적인 헤더들은 있어도 상관 없습니다. ex) 성별, 연락처 등 **/
 
 
-        JButton b1 = new JButton("확인");
-        b1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println();
-            }
-        });
-        this.add(b1, BorderLayout.SOUTH);
-        this.setVisible(true);
-    }
+            /*          Check a header      */
+            if(header != null){
+                columns = header.split(DELIMITER);
+                for(int i = 0; i < columns.length ; i++){
+                    if(columns[i].matches("학번")){
+                        isStudentID = true;
+                        col_ID = i;
+                    }
+                    else if(columns[i].matches("성명|이름")){
+                        isName = true;
+                        col_Name = i;
+                    }
+                    else if(columns[i].matches("학과")){
+                        isDepartment = true;
+                        col_Dept = i;
+                    }
+                    else if(columns[i].matches("학년")){
+                        isGrade = true;
+                        col_Grade = i;
+                    }
+                    else
+                        continue;
+                }
 
-    class MyTableModel extends AbstractTableModel {
-        private String[] columnNames = {"학번","이름","학과","학년", "선택"};
-
-        private Object[][] data = {
-                {"20120612", "김도연", "물리학과", new Integer(2), new Boolean(false)},
-                {"20120693", "박용진", "컴퓨터공학과", new Integer(4), new Boolean(false)},
-                {"20141234", "곽창수", "물리학과", new Integer(4), new Boolean(false)}};
-
-        public List<Integer> a(){
-            List<Integer> selectedRows = new ArrayList<>();
-            for(int i = 0; i < data.length; i++){
-                if(data[i][4].equals(true)){
-                    selectedRows.add(i);
+                if(isStudentID && isName && isDepartment && isGrade){
+                    isAllCols = true;
                 }
             }
-            return selectedRows;
-        }
 
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.length;
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
-
-        /*
-         * JTable uses this method to determine the default renderer/ editor for
-         * each cell. If we didn't implement this method, then the last column
-         * would contain text ("true"/"false"), rather than a check box.
-         */
-        public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
-
-        /*
-         * Don't need to implement this method unless your table's editable.
-         */
-        public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
-
-            if (col ==  4) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-         /*
-         * Don't need to implement this method unless your table's data can
-         * change.
-         */
-        public void setValueAt(Object value, int row, int col) {
-            if (DEBUG) {
-                System.out.println("Setting value at " + row + "," + col
-                        + " to " + value + " (an instance of "
-                        + value.getClass() + ")");
+            else{
+                System.out.println("헤더(첫 줄)가 없거나 잘못되었습니다.");
             }
 
-            data[row][col] = value;
-            fireTableCellUpdated(row, col);
-
-            if (DEBUG) {
-                System.out.println("New value of data:");
-                printDebugData();
-            }
-        }
-
-        private void printDebugData() {
-            int numRows = getRowCount();
-            int numCols = getColumnCount();
-
-            for (int i = 0; i < numRows; i++) {
-                System.out.print("    row " + i + ":");
-                for (int j = 0; j < numCols; j++) {
-                    System.out.print("  " + data[i][j]);
+            /*      Check if all columns is contained       */
+            if(isAllCols) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] temp = line.split(DELIMITER);
+                    String studentID = temp[col_ID];
+                    String name = temp[col_Name];
+                    String dept = temp[col_Dept];
+                    int grade = Integer.parseInt(temp[col_Grade]);
+                    studentArrayList.add(new Student(studentID, name, dept, grade, false));
                 }
-                System.out.println();
             }
-            System.out.println("--------------------------");
+
+            else{
+                System.out.println("헤더(첫 줄)가 없거나 잘못되었습니다.");
+            }
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
         }
     }
 }
-
-
-    /**
-     * Create the GUI and show it. For thread safety, this method should be
-     * invoked from the event-dispatching thread.
-     */

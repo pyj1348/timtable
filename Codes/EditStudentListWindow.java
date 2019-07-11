@@ -14,7 +14,7 @@ public class EditStudentListWindow extends JFrame {
     private JButton openButton = new JButton("불러오기");
     private JButton saveButton = new JButton("변경저장");
     private JTable table;
-    private ArrayList<Student> studentArrayList;
+    private List<Student> studentArrayList;
     private Object[][] data = {
             {"20120612", "김도연", "물리학과", new Integer(2), new Boolean(false)},
             {"20120693", "박용진", "컴퓨터공학과", new Integer(4), new Boolean(false)},
