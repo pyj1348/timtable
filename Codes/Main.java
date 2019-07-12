@@ -35,14 +35,15 @@ public class Main extends JFrame {
         i1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new EditStudentListWindow();
+                //new EditStudentListWindow();
+                new Test2();
             }
         });
 
         i2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Test("C:\\Users\\Jin\\Desktop\\11.txt", "euc-kr");
+                new Test("C:\\Users\\CAU\\Desktop\\국가근로\\2019 여름방학\\2019-하계 근로학생 배정표.csv", "x-windows-949");
             }
         });
 
@@ -178,4 +179,3 @@ public class Main extends JFrame {
     }
 
 }
-

@@ -15,7 +15,10 @@ public class AddStudentWindow extends JFrame{
 
     private Student newStudent;
 
-    public AddStudentWindow() {
+    private JTable jTable;
+
+    public AddStudentWindow(JTable jTable) {
+        this.jTable = jTable;
         this.setTitle("학생 추가");
         this.setSize(250, 280);
         this.setLocationRelativeTo(null); // Center the frame
@@ -149,11 +152,12 @@ public class AddStudentWindow extends JFrame{
                 }
 
                 if(isAllVaild) {
-                    newStudent = new Student(studentID, studentName, department, grade, false);
+                    newStudent = new Student(studentID, studentName, department, grade, "서가", false);
                     dispose();
                 }
             }
             else if(e.getSource() == btCancel){
+                EditStudentListWindow.MyTableModel model = (EditStudentListWindow.MyTableModel) jTable.getModel();
                 dispose();
             }
 

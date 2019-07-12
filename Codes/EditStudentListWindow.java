@@ -8,17 +8,17 @@ import javax.swing.table.AbstractTableModel;
 
 public class EditStudentListWindow extends JFrame {
 
+    private JButton changeRollButton = new JButton("담당변경");
     private JButton selectAllButton = new JButton("전체선택");
     private JButton deleteButton = new JButton("선택삭제");
     private JButton addButton = new JButton("학생추가");
     private JButton openButton = new JButton("불러오기");
-    private JButton saveButton = new JButton("변경저장");
     private JTable table;
     private List<Student> studentArrayList;
     private Object[][] data = {
-            {"20120612", "김도연", "물리학과", new Integer(2), new Boolean(false)},
-            {"20120693", "박용진", "컴퓨터공학과", new Integer(4), new Boolean(false)},
-            {"20141234", "곽창수", "물리학과", new Integer(4), new Boolean(false)}};
+            {"20120612", "김도연", "물리학과", new Integer(2), "서가", new Boolean(false)},
+            {"20120693", "박용진", "컴퓨터공학과", new Integer(4), "서가", new Boolean(false)},
+            {"20141234", "곽창수", "물리학과", new Integer(4), "서가", new Boolean(false)}};
 
     private static final int BOOLEAN_COLUMN = 4;
     private static boolean isSelectedAll = false;
@@ -50,18 +50,17 @@ public class EditStudentListWindow extends JFrame {
 
         JPanel pnBottomMenu = new JPanel();
         pnBottomMenu.add(selectAllButton);
+        pnBottomMenu.add(changeRollButton);
         pnBottomMenu.add(deleteButton);
         pnBottomMenu.add(addButton);
         pnBottomMenu.add(openButton);
-        pnBottomMenu.add(saveButton);
         MyButtonActionListener actionListener = new MyButtonActionListener();
         selectAllButton.addActionListener(actionListener);
+        changeRollButton.addActionListener(actionListener);
         deleteButton.addActionListener(actionListener);
         addButton.addActionListener(actionListener);
         openButton.addActionListener(actionListener);
-        saveButton.addActionListener(actionListener);
 
-        saveButton.setEnabled(false);
 
 
         /*
@@ -70,13 +69,10 @@ public class EditStudentListWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 for(int i = 0; i < table.getRowCount(); i++){
                     Boolean selected = Boolean.valueOf(table.getValueAt(i,BOOLEAN_COLUMN).toString());
-
                     if(selected){
                         System.out.println(table.getValueAt(i, 1));
                     }
                 }
-
-
             }
         });*/
         this.add(pnBottomMenu, BorderLayout.SOUTH);
@@ -90,7 +86,7 @@ public class EditStudentListWindow extends JFrame {
     }
 
     class MyTableModel extends AbstractTableModel {
-        private String[] columnNames = {"학번","이름","학과","학년", "선택"};
+        private String[] columnNames = {"학번","이름","학과","학년", "담당", "선택"};
 
         public int getColumnCount() {
             return columnNames.length;
@@ -105,6 +101,7 @@ public class EditStudentListWindow extends JFrame {
         }
 
         public Object getValueAt(int row, int col) {
+
             return studentArrayList.get(row).get(col);
         }
 
@@ -114,7 +111,7 @@ public class EditStudentListWindow extends JFrame {
          * would contain text ("true"/"false"), rather than a check box.
          */
         public Class getColumnClass(int col) {
-            return studentArrayList.get(0).get(col).getClass();
+            return studentArrayList.get(0).get(col).getClass(); // class 부른 후에 valueAt 실행
         }
 
         /*
@@ -123,7 +120,7 @@ public class EditStudentListWindow extends JFrame {
         public boolean isCellEditable(int row, int col) {
             //Note that the data/cell address is constant,
             //no matter where the cell appears onscreen.
-            if (col ==  4) {
+            if (col ==  5) {
                 return true;
             } else {
                 return false;
@@ -147,11 +144,14 @@ public class EditStudentListWindow extends JFrame {
             else if(col == 3){
                 newStudentData.setGrade((int) value);
             }else if(col == 4){
+                newStudentData.setRoll((String) value);
+            }else if(col == 5){
                 newStudentData.setSelected((Boolean) value);
             }
             studentArrayList.set(row, newStudentData);
             this.fireTableCellUpdated(row, col);
         }
+
 
         public void removeRow(int index){
             studentArrayList.remove(index);
@@ -168,10 +168,15 @@ public class EditStudentListWindow extends JFrame {
                     table.setValueAt(isSelectedAll, i, BOOLEAN_COLUMN);
                 }
             }
+            else if(e.getSource() == changeRollButton) {
+
+            }
+
             else if(e.getSource() == deleteButton){
                 MyTableModel model = (MyTableModel)table.getModel();
                 int rowCount = table.getRowCount();
                 List<Integer> selectedIndexes = new ArrayList<>();
+
                 for(int i = 0; i < rowCount; i++){
                     Boolean selected = Boolean.valueOf(table.getValueAt(i,BOOLEAN_COLUMN).toString());
                     if(selected){
@@ -184,15 +189,13 @@ public class EditStudentListWindow extends JFrame {
                 }
             }
             else if(e.getSource() == addButton){
-                new AddStudentWindow();
+                new AddStudentWindow(table);
                 // 변경된 DB 리스트에 추가
             }
             else if(e.getSource() == openButton){
 
             }
-            else if(e.getSource() == saveButton) {
 
-            }
         }
     }
 
