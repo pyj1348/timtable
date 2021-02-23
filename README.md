@@ -8,7 +8,7 @@ This app manages a work-shift of student-workers especially in the university li
 
 ### 1. Prepare .csv file about a list of students
 
-It must be included in the header such as **이름**, **학번**, **학과**, **학년**.
+It must include the headers such as **이름**, **학번**, **학과**, **학년**.
 
 ### 2. Uplode .csv file
 
