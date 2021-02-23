@@ -22,7 +22,7 @@ It must be included in the header such as **이름**, **학번**, **학과**, **
 
 ### 7. Copy & Paste the data to .word / .hwp and Print it
 
-## Envoirnment
+## Envoirnments
 Java  
 MySQL
 
